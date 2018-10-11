@@ -23,7 +23,7 @@ function setupTitle() {
   fill(0);
   textAlign(LEFT);
   textSize(22);
-  let titleText = "Exercise 5: Draw something!";
+  let titleText = "Exercise 6: Use API data";
   text(titleText, 60, 60);
 }
 
@@ -37,6 +37,7 @@ function getFilms() {
 
 // --------------------------------------------------------
 function createFilmInfo(film, xPos, yPos) {
+  // this time, we'll draw some of the film's info to the canvas
   let title       = film.title;
   let releaseDate = film.release_date;
   let rottenScore = film.rt_score;
