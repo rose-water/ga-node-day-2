@@ -10,7 +10,7 @@ const sPort      = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 9600 });
 const parser     = sPort.pipe(new Readline({ delimiter: '\n' }));
 
 io.on('connection', function (socket) {
-  console.log("New socket client connection: " + socket.id);
+  console.log("New socket client connection: ", socket.id);
 });
 
 // --------------------------------------------------------
@@ -24,11 +24,26 @@ sPort.on("open", () => {
 
 // --------------------------------------------------------
 // Our parser streams the incoming serial data
-parser.on('data', data => {
-  // console.log(data);
-  io.emit('data', { buttonData : data });
-});
+function throttle (callback, limit) {
+  
 
+  var wait = false;
+  return function () {
+    if (!wait) {
+
+      callback.apply(null, arguments);
+      wait = true;
+      setTimeout(function () {
+        wait = false;
+      }, limit);
+    }
+  }
+}
+
+parser.on('data', throttle(function(data) {
+    console.log(data);
+    io.emit('data', { knobData : data });
+  }, 1000));
 
 // --------------------------------------------------------
 // EXPRESS STUFF
@@ -47,3 +62,4 @@ app.get('/', (req, res) => {
 server.listen(PORT, () => {
   console.log('Listening on PORT ' + PORT);
 });
+

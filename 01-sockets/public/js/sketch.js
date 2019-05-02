@@ -1,5 +1,3 @@
-let button;
-let filmsData = [];
 let socket;
 let buttonPressed = false;
 let c;

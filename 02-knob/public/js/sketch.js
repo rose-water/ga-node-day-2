@@ -1,13 +1,16 @@
-let button;
-let filmsData = [];
 let socket;
-let buttonPressed = false;
-let c;
-let ellipseSize = 0;
+let minRadius       = 20;
+let maxRadius       = 400;
+let radiusIncrement = 20;
+let degreeIncrement = 10;
+let timeIncrement   = 0.000005;
+let rotateAmt       = 0.0;
+let pointSizeX      = 2;
+let pointSizeY      = 2;
+let doRotate        = true;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
-  c = color(0, 0, 0);
 
   // this works if you're running your server on the same port
   // if you're running from a separate server on a different port
@@ -17,14 +20,8 @@ function setup() {
   // we listen for message on the socket server called 'data'
   socket.on('data',
     (data) => {
-      console.log('button data: ', data.buttonData);
-      if (parseInt(data.buttonData) == 1) {
-        buttonPressed = true;
-      } else {
-        buttonPressed = false;
-        ellipseSize = random(20, 500);
-        c = color(random(255), 20, 255);
-      }
+      console.log('knob data: ', data.knobData);
+      // timeIncrement = parseInt(data.knobData);
     }
   );
 }
@@ -36,11 +33,29 @@ function windowResized() {
 
 // --------------------------------------------------------
 function draw() {
-  background(243, 214, 255);
-  strokeWeight(0);
-  
-  if (buttonPressed) {
-    fill(c);
-    ellipse(width/2, height/2, ellipseSize, ellipseSize);
+  background(0);
+
+  push();
+  translate(width/2, height/2);
+
+  for (let i = minRadius; i <= maxRadius; i+= radiusIncrement) {
+    rotate(rotateAmt);
+
+    beginShape();
+    for (let j = 0; j <= 360; j+= degreeIncrement) {
+      rotate(30);
+      let x = cos(radians(j)) * i;
+      let y = sin(radians(j)) * i;
+
+      ellipse(x, y, pointSizeX, pointSizeY);
+      stroke(255);
+    }
+
+    if (doRotate) {
+      rotateAmt += timeIncrement;
+    }
+
+    endShape();
   }
+  
 }
