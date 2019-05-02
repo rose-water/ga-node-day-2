@@ -19,7 +19,11 @@ sPort.on("open", () => {
 // --------------------------------------------------------
 // Our parser streams the incoming serial data
 parser.on('data', data => {
-  console.log(data);
+  if (parseInt(data) == 1) {
+    console.log("BUTTON PRESSED");
+  } else {
+    console.log("NOT PRESSED");
+  }
 });
 
 
