@@ -1,13 +1,11 @@
 let socket;
 let minRadius       = 20;
 let maxRadius       = 400;
-let radiusIncrement = 20;
+let radiusIncrement = 30;
 let degreeIncrement = 10;
-let timeIncrement   = 0.000005;
 let rotateAmt       = 0.0;
-let pointSizeX      = 2;
-let pointSizeY      = 2;
-let doRotate        = true;
+let pointSizeX      = 3;
+let pointSizeY      = 3;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
@@ -21,7 +19,9 @@ function setup() {
   socket.on('data',
     (data) => {
       console.log('knob data: ', data.knobData);
-      // timeIncrement = parseInt(data.knobData);
+      if (parseInt(data.knobData) != rotateAmt) {
+        rotateAmt = (parseInt(data.knobData));
+      }
     }
   );
 }
@@ -51,11 +51,6 @@ function draw() {
       stroke(255);
     }
 
-    if (doRotate) {
-      rotateAmt += timeIncrement;
-    }
-
     endShape();
   }
-  
 }

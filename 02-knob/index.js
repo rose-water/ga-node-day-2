@@ -1,3 +1,7 @@
+// --------------------------------------------------------
+// Make to upload 02-knob.ino to Arduino board!
+// --------------------------------------------------------
+
 const express = require('express');
 const app     = express();
 const PORT    = 3000;
@@ -24,26 +28,11 @@ sPort.on("open", () => {
 
 // --------------------------------------------------------
 // Our parser streams the incoming serial data
-function throttle (callback, limit) {
-  
+parser.on('data', function(data) {
+  console.log(data);
+  io.emit('data', { knobData : data });
+});
 
-  var wait = false;
-  return function () {
-    if (!wait) {
-
-      callback.apply(null, arguments);
-      wait = true;
-      setTimeout(function () {
-        wait = false;
-      }, limit);
-    }
-  }
-}
-
-parser.on('data', throttle(function(data) {
-    console.log(data);
-    io.emit('data', { knobData : data });
-  }, 1000));
 
 // --------------------------------------------------------
 // EXPRESS STUFF
