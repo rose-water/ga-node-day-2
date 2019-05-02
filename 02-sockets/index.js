@@ -1,11 +1,17 @@
-const express    = require('express');
-const app        = express();
-const PORT       = 3000;
+const express = require('express');
+const app     = express();
+const PORT    = 3000;
+const server  = require('http').createServer(app);
+const io      = require('socket.io')(server);
 
 const SerialPort = require('serialport');
 const Readline   = require('@serialport/parser-readline');
 const sPort      = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 9600 });
 const parser     = sPort.pipe(new Readline({ delimiter: '\n' }));
+
+io.on('connection', function (socket) {
+  console.log("New socket client connection: " + socket.id);
+});
 
 // --------------------------------------------------------
 // SERIAL PORT STUFF
@@ -19,7 +25,8 @@ sPort.on("open", () => {
 // --------------------------------------------------------
 // Our parser streams the incoming serial data
 parser.on('data', data => {
-  console.log(data);
+  // console.log(data);
+  io.emit('data', { buttonData : data });
 });
 
 
@@ -37,6 +44,6 @@ app.get('/', (req, res) => {
 
 // --------------------------------------------------------
 // tell our app where to listen for connections
-app.listen(PORT, () => {
-  console.log('listening on PORT: ' + PORT);
+server.listen(PORT, () => {
+  console.log('Listening on PORT ' + PORT);
 });
